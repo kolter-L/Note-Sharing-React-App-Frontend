@@ -64,7 +64,7 @@ export default function PostCreate(props) {
                 </div>
 
                 <button onClick={handleSubmit} className="btn btn-dark btn-large w-100">Submit</button>
-                <button onClick={() => props.onPostCreated} className="btn btn-secondary btn-large w-100 mt-3">Submit</button>
+                <button onClick={() => props.onPostCreated} className="btn btn-secondary btn-large w-100 mt-3">Cancel</button>
 
             </form>
         </div>

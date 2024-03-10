@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import production from "./constants";
+import PostCreate from "./components/NoteCreate";
 
 
 function App() {
 
   const [posts, setPosts] = useState([]);
+
+  const [showingCreateNewPostForm, setShowingCreateNewPostForm] = useState(false);
 
   // test function to get all posts from the API
 
@@ -34,11 +37,17 @@ function App() {
     <div className="container">
       <h1>greetings, human</h1>
 
-      <div className="mt-5">
-        <button onClick={getPosts} className="btn btn-dark btn-large w-100">Get The Notes</button>
-      </div>
+      {showingCreateNewPostForm === false && (
+        <div className="mt-5">
+          <button onClick={getPosts} className="btn btn-dark btn-large w-100">See All the Notes in the NoteBook</button>
+          <button onClick={() => { setShowingCreateNewPostForm(true)}} className="btn btn-secondary btn-large w-100 mt-4">Create A New One</button>
+        </div>
 
-      {posts.length > 0 && renderTable()}
+      )}
+
+      {(posts.length > 0 && showingCreateNewPostForm === false) && renderTable()}
+
+      {showingCreateNewPostForm && <PostCreate onPostCreated={onPostCreated} />}
 
     </div>
   );
@@ -72,9 +81,24 @@ function App() {
            ))}
           </tbody>
         </table>
-        <button onClick={() => setPosts([])} className="btn btn-dark btn-large w-100">Empty The Array</button>
+        <button onClick={() => setPosts([])} className="btn btn-dark btn-large w-100">Close the NoteBook</button>
       </div>
     )};
+
+    // using the onpostcreated function
+
+    function onPostCreated(createdPost) {
+
+      setShowingCreateNewPostForm(false);
+
+      if (createdPost === null) {
+        return;
+      }
+
+      alert(`Post created successfully. "${createdPost.title}" will be saved.`);
+
+      getPosts();
+    }
   
 }
 
