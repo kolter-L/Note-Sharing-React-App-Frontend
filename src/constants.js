@@ -5,7 +5,7 @@ const ENDPOINTS = {
     GET_POSTS_BY_ID: 'get-note-by-id',
     CREATE_POST: 'create-note',
     UPDATE_POST: 'update-note',
-    DELETE_POST_BY_ID: 'delete-note-by-id'
+    DELETE_POST_BY_ID: 'delete-note'
 };
 
 const production = {

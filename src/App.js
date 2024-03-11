@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import production from "./constants";
 import PostCreate from "./components/NoteCreate";
+import PostUpdate from "./components/NoteUpdate";
 
 
 function App() {
@@ -9,10 +10,14 @@ function App() {
 
   const [showingCreateNewPostForm, setShowingCreateNewPostForm] = useState(false);
 
+  const [postCurrentlyBeingUpdated, setPostCurrentlyBeingUpdated] = useState(null);
+
   // test function to get all posts from the API
 
   function getPosts() {
     const url = production.API_URL_GET_ALL_POSTS;
+
+    console.log(url);
   
     fetch(url, {
       method: 'GET'
@@ -33,11 +38,32 @@ function App() {
     });
   }
 
+  function deletePost(id) {
+
+    const url = `${production.API_URL_DELTE_POST_BY_ID}?Id=${id}`;
+
+    console.log(url);
+  
+    fetch(url, {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(responseFromServer => {
+      console.log(responseFromServer);
+      onPostDeleted(id);
+    })
+    .catch((error) => {
+      console.log(error);
+      alert(error);
+    });
+
+  }
+
   return (
     <div className="container">
       <h1>greetings, human</h1>
 
-      {showingCreateNewPostForm === false && (
+      {(showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null) && (
         <div className="mt-5">
           <button onClick={getPosts} className="btn btn-dark btn-large w-100">See All the Notes in the NoteBook</button>
           <button onClick={() => { setShowingCreateNewPostForm(true)}} className="btn btn-secondary btn-large w-100 mt-4">Create A New One</button>
@@ -45,9 +71,11 @@ function App() {
 
       )}
 
-      {(posts.length > 0 && showingCreateNewPostForm === false) && renderTable()}
+      {(posts.length > 0 && showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null) && renderTable()}
 
       {showingCreateNewPostForm && <PostCreate onPostCreated={onPostCreated} />}
+
+      {postCurrentlyBeingUpdated !== null && <PostUpdate post={postCurrentlyBeingUpdated} onPostUpdated={onPostUpdated} />}
 
     </div>
   );
@@ -73,8 +101,8 @@ function App() {
                 <td>{post.title}</td>
                 <td>{post.content}</td>
                 <td>
-                  <button className="btn btn-dark btn-large mx-3 my-3">Update Me</button>
-                  <button className="btn btn-secondarty btn-large">Delete Me</button>
+                  <button onClick={ () => setPostCurrentlyBeingUpdated(post)} className="btn btn-dark btn-large mx-3 my-3">Update Me</button>
+                  <button onClick={ () => { if(window.confirm("Are you certain that you want to delete this")) deletePost(post.id)}}className="btn btn-secondarty btn-large">Delete Me</button>
                 </td>
               </tr>
 
@@ -85,7 +113,30 @@ function App() {
       </div>
     )};
 
-    // using the onpostcreated function
+    // creating onPostDeleted function
+
+    function onPostDeleted(deletedPostid) {
+      
+      let postsCopy = [...posts];
+
+      const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
+
+        if (postsCopyPost.id === deletedPostid) {
+          
+          return true;
+        }
+      });
+
+      if (index !== -1) {
+        postsCopy.splice(index, 1);
+      }
+
+      setPosts(postsCopy);
+
+      alert("Note Deleted");
+    }  
+
+    // creating the onPostUpdated function
 
     function onPostCreated(createdPost) {
 
@@ -99,7 +150,35 @@ function App() {
 
       getPosts();
     }
-  
+
+    // creating the onPostCreated function
+
+    function onPostUpdated(updatedPost) {
+      setPostCurrentlyBeingUpdated(null);
+
+      if(updatedPost === null) {
+        return;
+      }
+
+      let postsCopy = [...posts];
+
+      const index = postsCopy.findIndex((postsCopyPost, currentIndex) => {
+
+        if (postsCopyPost.id === updatedPost.id) {
+          
+          return true;
+
+        }
+      });
+
+      if (index !== -1) {
+        postsCopy[index] = updatedPost;
+      }
+
+      setPosts(postsCopy);
+
+      alert("Note Updated");
+    }  
 }
 
 export default App;
