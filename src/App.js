@@ -3,6 +3,7 @@ import production from "./constants";
 import PostCreate from "./components/NoteCreate";
 import PostUpdate from "./components/NoteUpdate";
 
+// main function that renders app
 
 function App() {
 
@@ -61,7 +62,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1>greetings, human</h1>
+      <h1>Super Secret Notebook</h1>
 
       {(showingCreateNewPostForm === false && postCurrentlyBeingUpdated === null) && (
         <div className="mt-5">

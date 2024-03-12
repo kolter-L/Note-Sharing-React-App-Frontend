@@ -4,8 +4,8 @@ import production from "../constants";
 export default function PostCreate(props) {
 
     const initialFormData = Object.freeze({
-        title: "Note x",
-        content: "This is post x, and it is super scrummy"
+        title: "Title",
+        content: "Entry"
     });
 
     const [FormData, setFormData]= useState(initialFormData);
